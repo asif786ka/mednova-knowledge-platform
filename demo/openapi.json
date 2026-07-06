@@ -210,6 +210,88 @@
         }
       }
     },
+    "/mcp/status": {
+      "get": {
+        "tags": [
+          "mcp"
+        ],
+        "summary": "Mcp Status",
+        "description": "MCP client status: SDK availability and configured servers/transports.",
+        "operationId": "mcp_status_mcp_status_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          }
+        }
+      }
+    },
+    "/mcp/tools": {
+      "get": {
+        "tags": [
+          "mcp"
+        ],
+        "summary": "Mcp Tools",
+        "description": "List tools discovered across all configured MCP servers (local or remote).",
+        "operationId": "mcp_tools_mcp_tools_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          }
+        }
+      }
+    },
+    "/mcp/call": {
+      "post": {
+        "tags": [
+          "mcp"
+        ],
+        "summary": "Mcp Call",
+        "description": "Invoke an MCP tool by name. Works identically for local (stdio) and remote\n(HTTP/SSE) servers \u2014 the client resolves the transport from config.",
+        "operationId": "mcp_call_mcp_call_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/MCPToolCallRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MCPToolCallResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/": {
       "get": {
         "tags": [
@@ -355,6 +437,10 @@
             "type": "string",
             "title": "Embeddings"
           },
+          "mcp": {
+            "type": "string",
+            "title": "Mcp"
+          },
           "documents_indexed": {
             "type": "integer",
             "title": "Documents Indexed"
@@ -371,6 +457,7 @@
           "llm_provider",
           "cache",
           "embeddings",
+          "mcp",
           "documents_indexed",
           "graph_nodes"
         ],
@@ -457,6 +544,60 @@
           "relationships_created"
         ],
         "title": "IngestResponse"
+      },
+      "MCPToolCallRequest": {
+        "properties": {
+          "tool": {
+            "type": "string",
+            "title": "Tool",
+            "description": "Name of the MCP tool to invoke."
+          },
+          "arguments": {
+            "additionalProperties": true,
+            "type": "object",
+            "title": "Arguments",
+            "description": "Tool arguments matching its input schema."
+          }
+        },
+        "type": "object",
+        "required": [
+          "tool"
+        ],
+        "title": "MCPToolCallRequest"
+      },
+      "MCPToolCallResponse": {
+        "properties": {
+          "tool": {
+            "type": "string",
+            "title": "Tool"
+          },
+          "server": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Server"
+          },
+          "result": {
+            "type": "string",
+            "title": "Result"
+          },
+          "latency_ms": {
+            "type": "number",
+            "title": "Latency Ms"
+          }
+        },
+        "type": "object",
+        "required": [
+          "tool",
+          "result",
+          "latency_ms"
+        ],
+        "title": "MCPToolCallResponse"
       },
       "ValidationError": {
         "properties": {

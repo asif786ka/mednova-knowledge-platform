@@ -70,6 +70,7 @@ def architecture():
         _node(c, "cache", "Cache layer\nResponse + embedding cache\n(Redis | in-memory LRU)", LRED, RED)
         _node(c, "queue", "Background queue\n(FastAPI BackgroundTasks\n| Celery-ready)", LRED, RED)
         _node(c, "obs", "Observability\nStructured logs, latency,\ntracing (Langfuse hooks)", LGREY, GREY)
+        _node(c, "mcp", "MCP client\n(transport-agnostic:\nstdio | HTTP | SSE)", LPURPLE, PURPLE)
 
     # data stores
     with g.subgraph(name="cluster_data") as c:
@@ -80,6 +81,13 @@ def architecture():
         _node(c, "emb", "Embedding model\nsentence-transformers\n(hash fallback)", "#ffffff", ORANGE)
         _node(c, "llm", "LLM provider\nOpenAI / Ollama / local\n(optional)", "#ffffff", ORANGE)
         _node(c, "redis", "Redis\n(cache + broker)", "#ffffff", RED, shape="cylinder")
+
+    # MCP tool servers
+    with g.subgraph(name="cluster_mcp") as c:
+        c.attr(label="MCP Tool Servers", style="rounded,filled", fillcolor="#f6f2fb",
+               color=PURPLE, fontname="Helvetica-Bold", fontsize="11")
+        _node(c, "mcp_local", "Local MCP server\n(stdio subprocess)\nsearch_documents,\ngraph_neighbors,\nlist_projects", "#ffffff", PURPLE)
+        _node(c, "mcp_remote", "Remote MCP server\n(HTTP / SSE)\n3rd-party tools\n(optional, by config)", "#ffffff", PURPLE)
 
     # edges
     g.edge("user", "api")
@@ -105,6 +113,9 @@ def architecture():
     g.edge("queue", "redis", style="dashed")
     g.edge("router", "obs", style="dotted", constraint="false")
     g.edge("ingest", "queue", style="dashed", constraint="false")
+    g.edge("router", "mcp", label="tool route")
+    g.edge("mcp", "mcp_local", label="stdio")
+    g.edge("mcp", "mcp_remote", label="HTTP/SSE", style="dashed")
 
     _render(g, "architecture_diagram")
     print("wrote architecture_diagram.png")

@@ -1,0 +1,18 @@
+{
+  "servers": [
+    {
+      "name": "mednova-knowledge",
+      "transport": "stdio",
+      "command": "python",
+      "args": ["mcp_servers/knowledge_server.py"],
+      "enabled": true
+    },
+    {
+      "name": "remote-tools-example",
+      "transport": "streamable_http",
+      "url": "https://tools.example.com/mcp",
+      "headers": { "Authorization": "Bearer ${MCP_REMOTE_TOKEN}" },
+      "enabled": false
+    }
+  ]
+}

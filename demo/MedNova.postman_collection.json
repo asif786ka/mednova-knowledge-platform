@@ -67,6 +67,32 @@
     {
       "name": "Graph Stats",
       "request": {"method": "GET", "url": "{{base_url}}/graph/stats"}
+    },
+    {
+      "name": "MCP Status",
+      "request": {"method": "GET", "url": "{{base_url}}/mcp/status"}
+    },
+    {
+      "name": "MCP Tools (discover)",
+      "request": {"method": "GET", "url": "{{base_url}}/mcp/tools"}
+    },
+    {
+      "name": "MCP Call (graph_neighbors)",
+      "request": {
+        "method": "POST",
+        "header": [{"key": "Content-Type", "value": "application/json"}],
+        "url": "{{base_url}}/mcp/call",
+        "body": {"mode": "raw", "raw": "{\n  \"tool\": \"graph_neighbors\",\n  \"arguments\": { \"entity\": \"Patient Assistant Platform\" }\n}"}
+      }
+    },
+    {
+      "name": "Ask (MCP tool route)",
+      "request": {
+        "method": "POST",
+        "header": [{"key": "Content-Type", "value": "application/json"}],
+        "url": "{{base_url}}/ask",
+        "body": {"mode": "raw", "raw": "{\n  \"question\": \"What is the current date and time?\"\n}"}
+      }
     }
   ]
 }

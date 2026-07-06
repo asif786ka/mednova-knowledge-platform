@@ -63,7 +63,12 @@ def _configure_root():
     global _CONFIGURED
     if _CONFIGURED:
         return
-    handler = logging.StreamHandler(sys.stdout)
+    # stdout by default; MCP stdio servers set LOG_STREAM=stderr so structured logs never
+    # corrupt the JSON-RPC protocol stream (which owns stdout).
+    import os
+
+    stream = sys.stderr if os.getenv("LOG_STREAM", "stdout").lower() == "stderr" else sys.stdout
+    handler = logging.StreamHandler(stream)
     handler.setFormatter(JsonFormatter())
     root = logging.getLogger("mednova")
     root.handlers = [handler]

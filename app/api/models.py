@@ -13,8 +13,22 @@ class HealthResponse(BaseModel):
     llm_provider: str
     cache: str
     embeddings: str
+    mcp: str
     documents_indexed: int
     graph_nodes: int
+
+
+class MCPToolCallRequest(BaseModel):
+    tool: str = Field(..., description="Name of the MCP tool to invoke.")
+    arguments: dict = Field(default_factory=dict,
+                            description="Tool arguments matching its input schema.")
+
+
+class MCPToolCallResponse(BaseModel):
+    tool: str
+    server: Optional[str] = None
+    result: str
+    latency_ms: float
 
 
 class IngestRequest(BaseModel):

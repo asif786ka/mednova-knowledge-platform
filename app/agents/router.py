@@ -24,6 +24,7 @@ from typing import Dict, List, Optional
 from app.graph.graphrag import GraphRAG
 from app.graph.graph_store import GraphStore
 from app.llm.provider import NO_INFO, get_llm_provider
+from app.mcp.client import get_mcp_manager
 from app.observability import get_logger, trace_event
 from app.observability.logging import log
 from app.retrieval.prompts import SYSTEM_PROMPT, build_user_prompt
@@ -31,6 +32,14 @@ from app.retrieval.rag import RAGRetriever
 from app.retrieval.vector_store import VectorStore
 
 logger = get_logger("router")
+
+# Deterministic tool-intent triggers. When one matches AND MCP is available, the agent takes
+# the "tool" route and calls the corresponding MCP tool. With a hosted LLM this is replaced by
+# native function-calling for open-ended tool selection (see SYSTEM_DESIGN 'MCP tool use').
+TOOL_TRIGGERS = {
+    "current_datetime": ["current date", "current time", "what time", "today's date",
+                         "what is the date", "time is it", "date today", "what day is"],
+}
 
 _REL_WORDS = ["relationship", "related", "connected", "connection", "between",
               "belongs", "depends", "link", "associated", "owns", "uses"]
@@ -68,14 +77,27 @@ class AgentAnswer:
 
 
 class AgenticRouter:
-    def __init__(self, vector_store: VectorStore, graph_store: GraphStore) -> None:
+    def __init__(self, vector_store: VectorStore, graph_store: GraphStore,
+                 mcp_manager=None) -> None:
         self.rag = RAGRetriever(vector_store)
         self.graphrag = GraphRAG(graph_store)
         self.llm = get_llm_provider()
+        # MCP tool broker (local stdio server by default; remote by config). Optional:
+        # if the SDK/servers are unavailable the tool route degrades to vector search.
+        self.mcp = mcp_manager if mcp_manager is not None else get_mcp_manager()
+
+    def _match_tool(self, question: str) -> Optional[str]:
+        q = question.lower()
+        for tool, triggers in TOOL_TRIGGERS.items():
+            if any(tr in q for tr in triggers):
+                return tool
+        return None
 
     # -- node 1: classify --------------------------------------------------
     def classify(self, question: str) -> str:
         q = question.lower()
+        if self._match_tool(question) and self.mcp.available:
+            return "tool"
         if any(w in q for w in _SUMMARY_WORDS):
             return "summary"
         rel = any(w in q for w in _REL_WORDS)
@@ -98,6 +120,23 @@ class AgenticRouter:
         route = self.classify(question)
         log(logger, "INFO", "route selected", request_id=request_id,
             route=route, question=question)
+
+        # -- MCP tool route: agent invokes an external tool over MCP --
+        if route == "tool":
+            tool_name = self._match_tool(question)
+            try:
+                with trace_event("mcp_tool_call", request_id=request_id, tool=tool_name):
+                    output = self.mcp.call_tool(tool_name, {})
+                return AgentAnswer(
+                    answer=output, sources=[f"mcp://mednova-knowledge/{tool_name}"],
+                    retrieval_strategy="mcp_tool", related_entities=[], route="tool",
+                    confidence=0.9, llm_backend=self.llm.backend,
+                    matched_entities=[tool_name],
+                    reasoning=f"Agent selected MCP tool '{tool_name}'.")
+            except Exception as exc:  # tool failed -> fall back to normal retrieval
+                log(logger, "WARNING", "mcp tool failed; falling back",
+                    request_id=request_id, tool=tool_name, error=str(exc))
+                route = "vector"
 
         graph_ctx = None
         rag_ctx = None

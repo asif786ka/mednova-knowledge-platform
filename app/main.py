@@ -22,11 +22,12 @@ from fastapi.responses import JSONResponse
 from app import state
 from app.api.models import (
     AskRequest, AskResponse, HealthResponse, IngestRequest, IngestResponse,
-    VoiceAskRequest, VoiceAskResponse,
+    MCPToolCallRequest, MCPToolCallResponse, VoiceAskRequest, VoiceAskResponse,
 )
 from app.cache import get_cache
 from app.config import settings
 from app.llm.provider import get_llm_provider
+from app.mcp.client import get_mcp_manager
 from app.observability import Timer, get_logger, new_request_id
 from app.observability.logging import log
 from app.queue import get_job_store, run_ingestion_job
@@ -90,6 +91,9 @@ def health() -> HealthResponse:
     llm = get_llm_provider()
     cache = get_cache()
     embedder = get_embedder()
+    mcp = get_mcp_manager()
+    mcp_status = (f"connected ({len(mcp.servers)} server(s))" if mcp.available
+                  else "disabled")
     return HealthResponse(
         status="ok",
         vector_db="connected" if vs is not None else "unavailable",
@@ -98,6 +102,7 @@ def health() -> HealthResponse:
                                     else " (deterministic fallback)"),
         cache=cache.backend,
         embeddings=embedder.backend,
+        mcp=mcp_status,
         documents_indexed=vs.count() if vs else 0,
         graph_nodes=gs.g.number_of_nodes() if gs else 0,
     )
@@ -190,6 +195,41 @@ def voice_ask(req: VoiceAskRequest, request: Request) -> VoiceAskResponse:
 @app.get("/graph/stats", tags=["graph"])
 def graph_stats():
     return state.get_graph_store().stats() if state.get_graph_store() else {}
+
+
+@app.get("/mcp/status", tags=["mcp"])
+def mcp_status():
+    """MCP client status: SDK availability and configured servers/transports."""
+    return get_mcp_manager().status()
+
+
+@app.get("/mcp/tools", tags=["mcp"])
+def mcp_tools():
+    """List tools discovered across all configured MCP servers (local or remote)."""
+    mgr = get_mcp_manager()
+    if not mgr.available:
+        return {"available": False, "tools": []}
+    return {"available": True, "tools": [t.dict() for t in mgr.list_tools()]}
+
+
+@app.post("/mcp/call", response_model=MCPToolCallResponse, tags=["mcp"])
+def mcp_call(req: MCPToolCallRequest):
+    """Invoke an MCP tool by name. Works identically for local (stdio) and remote
+    (HTTP/SSE) servers — the client resolves the transport from config."""
+    mgr = get_mcp_manager()
+    if not mgr.available:
+        raise HTTPException(status_code=503,
+                            detail="MCP not available (SDK missing or no servers configured)")
+    server = next((t.server for t in mgr.list_tools() if t.name == req.tool), None)
+    if server is None:
+        raise HTTPException(status_code=404, detail=f"tool '{req.tool}' not found")
+    with Timer() as t:
+        try:
+            result = mgr.call_tool(req.tool, req.arguments)
+        except Exception as exc:  # pragma: no cover
+            raise HTTPException(status_code=500, detail=f"tool call failed: {exc}")
+    return MCPToolCallResponse(tool=req.tool, server=server, result=result,
+                               latency_ms=t.ms)
 
 
 @app.get("/", tags=["system"])

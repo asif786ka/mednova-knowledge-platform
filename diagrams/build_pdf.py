@@ -180,6 +180,9 @@ def build():
                               "documented for horizontal scaling."],
         ["Observability", "Structured JSON logs, per-request latency, route + retrieval traces, "
                           "optional Langfuse tracing when keys are present."],
+        ["MCP client", "Transport-agnostic Model Context Protocol client. Talks to a local "
+                       "stdio tool server today and remote HTTP/SSE servers by config only. "
+                       "Lets the agent invoke external tools; degrades gracefully if absent."],
     ]
     t = Table([[Paragraph(f"<b>{a}</b>", styles["Small"]), Paragraph(b, styles["Small"])]
                for a, b in comp], colWidths=[3.4 * cm, 13.1 * cm])
@@ -209,10 +212,20 @@ def build():
         ["Summary route", "\"Summarise the architecture\" — broad multi-chunk retrieval + summarise "
                           "prompt."],
         ["Voice route", "/voice/ask — transcript (or STT) -> same router -> optional TTS."],
+        ["Tool route", "Invokes an external tool over MCP (e.g. live data). Local stdio "
+                       "server now; remote HTTP/SSE servers by config."],
     ]))
     story.append(P("Every route ends in a <b>verify</b> step: if retrieval confidence is below "
                    "threshold, the system returns an explicit \"not enough information in the "
                    "documents\" answer instead of guessing.", "Body"))
+    story.append(P("<b>External tools via MCP.</b> The agent can also call tools through a "
+                   "transport-agnostic <b>Model Context Protocol</b> client. A local MCP server "
+                   "(spawned over stdio) exposes the platform's own retrieval as standard tools "
+                   "(<i>search_documents, graph_neighbors, list_projects</i>) plus generic tools; "
+                   "switching to a <b>remote</b> MCP server is a pure config change "
+                   "(stdio → HTTP/SSE), so third-party or shared tool servers plug in without "
+                   "code changes. If the MCP layer is unavailable the tool route degrades to "
+                   "vector search.", "Body"))
     story.append(PageBreak())
 
     # ---- 5. data model ----

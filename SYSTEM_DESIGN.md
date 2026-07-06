@@ -86,6 +86,45 @@ the classifier can be upgraded to an LLM call; the interface is unchanged. This 
 choice**: heuristic routing is free, fast, testable and transparent, which matters for an
 internal tool that must justify its answers.
 
+## 3a. External tools via MCP (transport-agnostic)
+The agent can reach beyond the corpus by calling tools over the **Model Context Protocol**.
+
+```mermaid
+flowchart LR
+    R[Agentic Router<br/>tool route] --> CL[MCP client<br/>app/mcp]
+    CL -->|stdio| L[Local MCP server<br/>mcp_servers/knowledge_server.py]
+    CL -.->|streamable_http / sse| RM[Remote MCP server<br/>3rd-party tools]
+    L --> T1[search_documents]
+    L --> T2[graph_neighbors]
+    L --> T3[list_projects]
+    L --> T4[current_datetime]
+```
+
+**Why MCP.** MCP is the emerging open standard for exposing tools to LLM agents. Building the
+tool layer on MCP means the platform's capabilities are reusable by *any* MCP host (Claude
+Desktop, Cursor, other agents), and conversely the agent can consume *any* third-party MCP
+server without bespoke integration code.
+
+**Transport-agnostic by design.** `app/mcp/client.py` builds the session from a per-server
+`transport` field in `mcp.config.json`:
+- `stdio` → spawns the server as a local subprocess (default; zero setup).
+- `streamable_http` / `sse` → connects to a remote URL (with auth headers).
+
+The client code is identical across transports; only config changes. So a tool that runs
+locally during development can move to a shared remote server in production by editing one JSON
+block — exactly the "local now, remote later" requirement. The `mcp` SDK is optional: if it's
+absent the manager reports `available=False` and the agent's tool route degrades to vector
+search.
+
+**Protocol hygiene.** The stdio server forces all application logs to **stderr**
+(`LOG_STREAM=stderr`) because MCP stdio reserves stdout for JSON-RPC framing — a subtle but
+essential detail for a working stdio server.
+
+**Agent integration.** The router adds a `tool` route selected by deterministic tool-intent
+triggers (e.g. date/time questions → `current_datetime`). Tool output is returned with an
+`mcp://server/tool` source for traceability. With a hosted LLM this trigger is replaced by
+native function-calling, letting the model choose among all discovered MCP tools.
+
 ## 4. Data model
 
 ```mermaid
@@ -162,6 +201,7 @@ per-layer and independent:
 | LLM | Extractive fallback | OpenAI / Anthropic / self-hosted via LiteLLM |
 | Embeddings | Hashing embedder | sentence-transformers / hosted embeddings |
 | Tracing | Structured logs | Langfuse + OpenTelemetry → Prometheus/Grafana |
+| Tools (MCP) | Local stdio server | Remote streamable-HTTP / SSE servers (config only) |
 
 **LLM routing**: because the provider is abstracted, cheap models can serve classification and
 stronger models synthesis — routing by task to balance cost and quality.

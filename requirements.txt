@@ -16,6 +16,9 @@ python-docx>=1.1      # .docx ingestion
 # --- LLM provider abstraction (extractive fallback used if no key set) ---
 litellm>=1.35
 
+# --- MCP: model context protocol client + local server (agnostic transport) ---
+mcp>=1.2
+
 # --- optional: caching / queue broker ---
 redis>=5.0
 

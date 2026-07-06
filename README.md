@@ -54,11 +54,15 @@ future AI assistants and voice interfaces.
   Providers, Risks, Requirements, Documents; used for relationship questions and to enrich
   answers.
 - **Agentic router** — a LangGraph-style state machine (classify → plan → retrieve →
-  synthesize → verify) that picks vector / graph / hybrid / summary routes.
+  synthesize → verify) that picks vector / graph / hybrid / summary / **tool** routes.
+- **MCP tool use (transport-agnostic)** — a Model Context Protocol client that connects to a
+  **local** stdio tool server today and **remote** HTTP/SSE servers by config only. The agent
+  can invoke external tools; new tool servers plug in with zero code changes.
 - **LLM provider abstraction** — LiteLLM (OpenAI/Anthropic/Ollama/…) with an automatic
   **deterministic extractive fallback** so it always answers, offline, without hallucinating.
 - **FastAPI backend** — `/health`, `/ingest`, `/ask`, `/voice/ask`, `/jobs/{id}`,
-  `/graph/stats`, with Pydantic validation, error handling, and request ids.
+  `/graph/stats`, `/mcp/status`, `/mcp/tools`, `/mcp/call`, with Pydantic validation, error
+  handling, and request ids.
 - **Caching** — response cache (Redis or in-memory TTL-LRU) keyed on the question hash.
 - **Queue / background processing** — async ingestion via FastAPI BackgroundTasks
   (Celery-ready).
@@ -69,9 +73,9 @@ future AI assistants and voice interfaces.
   pytest suite, and an evaluation harness.
 
 ## Technologies used
-Python 3.11 · FastAPI · Pydantic · NumPy · NetworkX · LiteLLM (optional) ·
-sentence-transformers (optional) · Redis (optional) · Langfuse (optional) · Graphviz / pyvis ·
-pytest · Docker / docker-compose.
+Python 3.11 · FastAPI · Pydantic · NumPy · NetworkX · **MCP (Model Context Protocol)** ·
+LiteLLM (optional) · sentence-transformers (optional) · Redis (optional) · Langfuse (optional) ·
+Graphviz / pyvis · pytest · Docker / docker-compose.
 
 **Paid APIs:** none required. If you set `OPENAI_API_KEY` (or another provider key) the LLM
 synthesis path uses that provider and will incur that provider's cost; otherwise everything is
@@ -225,6 +229,44 @@ The **verify** node is an honesty gate: if retrieval confidence is too low, it r
 explicit *“not enough information”* instead of guessing. A `graph` route with no graph hits
 gracefully falls back to `vector`.
 
+### MCP tool use (local now, remote later)
+The platform ships an **MCP (Model Context Protocol) client** (`app/mcp/`) and a **local MCP
+server** (`mcp_servers/knowledge_server.py`, built with FastMCP). The server exposes the
+platform's own capabilities as standard MCP tools — `search_documents`, `graph_neighbors`,
+`list_projects` — plus a generic `current_datetime`, so any MCP client (this agent, Claude
+Desktop, Cursor, …) can call them.
+
+The client is **transport-agnostic**: each server is declared in
+[`mcp.config.json`](mcp.config.json) with a `transport` of `stdio` (local subprocess),
+`streamable_http`, or `sse` (remote). Moving a tool from local to a remote server is a pure
+config edit — no code changes:
+
+```json
+{ "name": "remote-tools", "transport": "streamable_http",
+  "url": "https://tools.example.com/mcp",
+  "headers": { "Authorization": "Bearer ${MCP_REMOTE_TOKEN}" } }
+```
+
+The agent gains a **`tool` route**: when a question matches a tool intent (and MCP is
+available) it calls the tool over MCP and returns the result with an `mcp://server/tool`
+source; otherwise it degrades to vector search. With a hosted LLM this deterministic trigger is
+replaced by native function-calling for open-ended tool selection.
+
+```bash
+curl localhost:8000/mcp/tools        # discover tools across all configured servers
+curl -X POST localhost:8000/mcp/call -H 'Content-Type: application/json' \
+     -d '{"tool":"graph_neighbors","arguments":{"entity":"Patient Assistant Platform"}}'
+# the agent auto-uses a tool when relevant:
+curl -X POST localhost:8000/ask -H 'Content-Type: application/json' \
+     -d '{"question":"What is the current date and time?"}'   # -> route: tool
+```
+
+Run the server standalone (e.g. to register it in another MCP host):
+```bash
+python mcp_servers/knowledge_server.py                 # stdio (local)
+python mcp_servers/knowledge_server.py streamable-http # remote-style HTTP
+```
+
 ### Caching strategy
 `app/cache/` provides a response cache keyed on `sha256(normalised question)`. A repeated
 question returns instantly and **skips the LLM entirely** (biggest cost/latency win). Backend
@@ -281,11 +323,14 @@ awtg_home_task/
 │   ├── ingestion/              # loaders, chunker, extractor, pipeline
 │   ├── retrieval/              # embeddings, vector_store, rag, prompts
 │   ├── graph/                  # graph_store, graphrag, viz
-│   ├── agents/router.py        # agentic router (state machine)
+│   ├── agents/router.py        # agentic router (state machine + MCP tool route)
 │   ├── llm/provider.py         # LiteLLM abstraction + extractive fallback
+│   ├── mcp/                    # transport-agnostic MCP client + server registry
 │   ├── cache/                  # Redis / in-memory response cache
 │   ├── queue/                  # background job store + worker
 │   └── observability/          # structured logging + tracing
+├── mcp_servers/                # local FastMCP server (KB-backed tools)
+├── mcp.config.json             # MCP server registry (stdio local + remote example)
 ├── sample_docs/                # 9 fictional MedNova documents
 ├── diagrams/                   # architecture, data-model & knowledge-graph diagrams (+ generators)
 ├── demo/                       # demo evidence: API examples, eval report, logs, OpenAPI

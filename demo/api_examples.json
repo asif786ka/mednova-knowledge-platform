@@ -1,29 +1,3 @@
-{"ts": "2026-07-06T13:02:34", "level": "INFO", "logger": "mednova.embeddings", "msg": "sentence-transformers unavailable (No module named 'sentence_transformers'); using hash embedder"}
-{"ts": "2026-07-06T13:02:34", "level": "INFO", "logger": "mednova.vector_store", "msg": "Loaded vector store: 18 records"}
-{"ts": "2026-07-06T13:02:34", "level": "INFO", "logger": "mednova.graph_store", "msg": "Loaded graph: 56 nodes / 131 edges"}
-{"ts": "2026-07-06T13:02:34", "level": "INFO", "logger": "mednova.state", "msg": "Serving stores reloaded (18 vectors, 56 graph nodes)"}
-{"ts": "2026-07-06T13:02:34", "level": "INFO", "logger": "mednova.api", "msg": "request", "request_id": "56cbb14461ce", "method": "GET", "path": "/health", "status": 200, "latency_ms": 6.2}
-{"ts": "2026-07-06T13:02:34", "level": "INFO", "logger": "mednova.router", "msg": "route selected", "request_id": "4118d9ceb8a5", "route": "hybrid", "question": "Which projects use LangChain and Neo4j?"}
-{"ts": "2026-07-06T13:02:34", "level": "INFO", "logger": "mednova.trace", "msg": "trace:retrieve", "request_id": "4118d9ceb8a5", "latency_ms": 0.6, "route": "hybrid"}
-{"ts": "2026-07-06T13:02:34", "level": "INFO", "logger": "mednova.trace", "msg": "trace:synthesize", "request_id": "4118d9ceb8a5", "latency_ms": 0.5, "backend": "extractive-fallback"}
-{"ts": "2026-07-06T13:02:34", "level": "INFO", "logger": "mednova.api", "msg": "answered", "request_id": "4118d9ceb8a5", "route": "hybrid", "strategy": "vector_and_graph", "confidence": 0.9, "sources": ["knowledge_platform_design.md", "meeting_summary_2026_06.md", "patient_assistant_project_brief.md", "risk_assessment.md", "technical_architecture_notes.md"], "latency_ms": 2.0}
-{"ts": "2026-07-06T13:02:34", "level": "INFO", "logger": "mednova.api", "msg": "request", "request_id": "4118d9ceb8a5", "method": "POST", "path": "/ask", "status": 200, "latency_ms": 3.7}
-{"ts": "2026-07-06T13:02:34", "level": "INFO", "logger": "mednova.router", "msg": "route selected", "request_id": "96738d243df8", "route": "graph", "question": "What is the relationship between the knowledge platform, Neo4j, and Astra DB?"}
-{"ts": "2026-07-06T13:02:34", "level": "INFO", "logger": "mednova.trace", "msg": "trace:retrieve", "request_id": "96738d243df8", "latency_ms": 0.2, "route": "graph"}
-{"ts": "2026-07-06T13:02:34", "level": "INFO", "logger": "mednova.trace", "msg": "trace:synthesize", "request_id": "96738d243df8", "latency_ms": 0.2, "backend": "extractive-fallback"}
-{"ts": "2026-07-06T13:02:34", "level": "INFO", "logger": "mednova.api", "msg": "answered", "request_id": "96738d243df8", "route": "graph", "strategy": "graph", "confidence": 0.9, "sources": ["knowledge_platform_design.md", "meeting_summary_2026_06.md", "risk_assessment.md", "technical_architecture_notes.md"], "latency_ms": 1.1}
-{"ts": "2026-07-06T13:02:34", "level": "INFO", "logger": "mednova.api", "msg": "request", "request_id": "96738d243df8", "method": "POST", "path": "/ask", "status": 200, "latency_ms": 2.1}
-{"ts": "2026-07-06T13:02:34", "level": "INFO", "logger": "mednova.router", "msg": "route selected", "request_id": "6d332537cbc0", "route": "vector", "question": "What is the capital of France?"}
-{"ts": "2026-07-06T13:02:34", "level": "INFO", "logger": "mednova.trace", "msg": "trace:retrieve", "request_id": "6d332537cbc0", "latency_ms": 0.3, "route": "vector"}
-{"ts": "2026-07-06T13:02:34", "level": "INFO", "logger": "mednova.trace", "msg": "trace:synthesize", "request_id": "6d332537cbc0", "latency_ms": 0.2, "backend": "extractive-fallback"}
-{"ts": "2026-07-06T13:02:34", "level": "INFO", "logger": "mednova.api", "msg": "answered", "request_id": "6d332537cbc0", "route": "vector", "strategy": "vector", "confidence": 0.258, "sources": ["knowledge_platform_design.md", "technical_architecture_notes.md", "patient_assistant_project_brief.md"], "latency_ms": 1.4}
-{"ts": "2026-07-06T13:02:34", "level": "INFO", "logger": "mednova.api", "msg": "request", "request_id": "6d332537cbc0", "method": "POST", "path": "/ask", "status": 200, "latency_ms": 2.3}
-{"ts": "2026-07-06T13:02:34", "level": "INFO", "logger": "mednova.router", "msg": "route selected", "request_id": "f2234f44ca23", "route": "vector", "question": "Which requirements mention voice-based AI?"}
-{"ts": "2026-07-06T13:02:34", "level": "INFO", "logger": "mednova.trace", "msg": "trace:retrieve", "request_id": "f2234f44ca23", "latency_ms": 0.3, "route": "vector"}
-{"ts": "2026-07-06T13:02:34", "level": "INFO", "logger": "mednova.trace", "msg": "trace:synthesize", "request_id": "f2234f44ca23", "latency_ms": 0.3, "backend": "extractive-fallback"}
-{"ts": "2026-07-06T13:02:34", "level": "INFO", "logger": "mednova.api", "msg": "voice answered", "request_id": "f2234f44ca23", "route": "vector", "latency_ms": 1.6}
-{"ts": "2026-07-06T13:02:34", "level": "INFO", "logger": "mednova.api", "msg": "request", "request_id": "f2234f44ca23", "method": "POST", "path": "/voice/ask", "status": 200, "latency_ms": 2.9}
-{"ts": "2026-07-06T13:02:34", "level": "INFO", "logger": "mednova.api", "msg": "request", "request_id": "7a6690fba9a5", "method": "GET", "path": "/graph/stats", "status": 200, "latency_ms": 0.7}
 {
   "GET /health": {
     "status": "ok",
@@ -32,11 +6,95 @@
     "llm_provider": "extractive-fallback (deterministic fallback)",
     "cache": "in-memory-lru",
     "embeddings": "hash",
+    "mcp": "connected (1 server(s))",
     "documents_indexed": 18,
     "graph_nodes": 56
   },
+  "GET /mcp/status": {
+    "available": true,
+    "sdk_installed": true,
+    "servers": [
+      {
+        "name": "mednova-knowledge",
+        "transport": "stdio"
+      }
+    ],
+    "tool_count": 4
+  },
+  "GET /mcp/tools": {
+    "available": true,
+    "tools": [
+      {
+        "server": "mednova-knowledge",
+        "name": "search_documents",
+        "description": "Semantic search over MedNova documents. Returns the top matching chunks with their\n    source filenames. Use for fact-lookup questions like 'which documents mention cloud\n    deployment'.",
+        "input_schema": {
+          "properties": {
+            "query": {
+              "title": "Query",
+              "type": "string"
+            },
+            "k": {
+              "default": 5,
+              "title": "K",
+              "type": "integer"
+            }
+          },
+          "required": [
+            "query"
+          ],
+          "title": "search_documentsArguments",
+          "type": "object"
+        }
+      },
+      {
+        "server": "mednova-knowledge",
+        "name": "graph_neighbors",
+        "description": "Return knowledge-graph relationships connected to an entity (project, technology,\n    cloud provider, risk, etc.). Use for relationship questions like 'what is connected to\n    the patient assistant platform'.",
+        "input_schema": {
+          "properties": {
+            "entity": {
+              "title": "Entity",
+              "type": "string"
+            }
+          },
+          "required": [
+            "entity"
+          ],
+          "title": "graph_neighborsArguments",
+          "type": "object"
+        }
+      },
+      {
+        "server": "mednova-knowledge",
+        "name": "list_projects",
+        "description": "List all MedNova projects present in the knowledge graph.",
+        "input_schema": {
+          "properties": {},
+          "title": "list_projectsArguments",
+          "type": "object"
+        }
+      },
+      {
+        "server": "mednova-knowledge",
+        "name": "current_datetime",
+        "description": "Return the current UTC date and time (ISO 8601). A generic tool independent of the\n    knowledge base, demonstrating mixed tool types via MCP.",
+        "input_schema": {
+          "properties": {},
+          "title": "current_datetimeArguments",
+          "type": "object"
+        }
+      }
+    ]
+  },
+  "POST /mcp/call (graph_neighbors)": {
+    "tool": "graph_neighbors",
+    "server": "mednova-knowledge",
+    "result": "Matched: MedNova Knowledge Platform\nRelated entities: AI automation, AWS, Astra DB, Data privacy / HIPAA risk, FastAPI, Google Cloud Platform, GraphRAG, LangChain, LangGraph, Langfuse, Latency risk, LiteLLM, MedNova Knowledge Platform, MedNova Solutions, Microsoft Azure, Model hallucination risk, Neo4j, RAG, Redis, Speech recognition accuracy risk, Vendor lock-in risk\n\nFacts:\n- Document 'cloud_deployment_plan.md' describes Project 'MedNova Knowledge Platform'.\n- Document 'cloud_deployment_plan.md' mentions Project 'MedNova Knowledge Platform'.\n- Document 'cloud_deployment_plan.md' mentions Technology 'Redis'.\n- Document 'cloud_deployment_plan.md' mentions CloudProvider 'AWS'.\n- Document 'cloud_deployment_plan.md' mentions CloudProvider 'Microsoft Azure'.\n- Document 'cloud_deployment_plan.md' mentions CloudProvider 'Google Cloud Platform'.\n- Project 'MedNova Knowledge Platform' uses Technology 'Redis'.\n- Project 'MedNova Knowledge Platform' is deployed on CloudProvider 'AWS'.\n- Project 'MedNova Knowledge Platform' is deployed on CloudProvider 'Microsoft Azure'.\n- Project 'MedNova Knowledge Platform' is deployed on CloudProvider 'Google Cloud Platform'.\n- Project 'MedNova Knowledge Platform' uses Technology 'LangChain'.\n- Project 'MedNova Knowledge Platform' uses Technology 'LangGraph'.\n- Project 'MedNova Knowledge Platform' uses Technology 'Neo4j'.\n- Project 'MedNova Knowledge Platform' uses Technology 'Astra DB'.\n- Project 'MedNova Knowledge Platform' uses Technology 'FastAPI'.\n- Project 'MedNova Knowledge Platform' uses Technology 'RAG'.\n- Project 'MedNova Knowledge Platform' uses Technology 'GraphRAG'.\n- Project 'MedNova Knowledge Platform' uses Technology 'Langfuse'.\n- Project 'MedNova Knowledge Platform' uses Technology 'LiteLLM'.\n- Project 'MedNova Knowledge Platform' uses Technology 'AI automation'.\n- Project 'MedNova Knowledge Platform' has risk Risk 'Data privacy / HIPAA risk'.\n- Project 'MedNova Knowledge Platform' has risk Risk 'Model hallucination risk'.\n- Project 'MedNova Knowledge Platform' has risk Risk 'Latency risk'.\n- Project 'MedNova Knowledge Platform' has risk Risk 'Vendor lock-in risk'.\n- Project 'MedNova Knowledge Platform' has risk Risk 'Speech recognition accuracy risk'.\n- Document 'knowledge_platform_design.md' describes Project 'MedNova Knowledge Platform'.\n- Document 'knowledge_platform_design.md' mentions Project 'MedNova Knowledge Platform'.\n- Document 'knowledge_platform_design.md' mentions Technology 'LangChain'.\n- Document 'knowledge_platform_design.md' mentions Technology 'LangGraph'.\n- Document 'knowledge_platform_design.md' mentions Technology 'Neo4j'.\n- Document 'knowledge_platform_design.md' mentions Technology 'Astra DB'.\n- Document 'knowledge_platform_design.md' mentions Technology 'FastAPI'.\n- Document 'knowledge_platform_design.md' mentions Technology 'Redis'.\n- Document 'knowledge_platform_design.md' mentions Technology 'RAG'.\n- Document 'knowledge_platform_design.md' mentions Technology 'GraphRAG'.\n- Document 'knowledge_platform_design.md' mentions Technology 'Langfuse'.\n- Document 'knowledge_platform_design.md' mentions Technology 'LiteLLM'.\n- Document 'knowledge_platform_design.md' mentions CloudProvider 'AWS'.\n- Client 'MedNova Solutions' owns Project 'MedNova Knowledge Platform'.\n- Requirement 'All answers must be source-backed and cite the originating document' belongs to Project 'MedNova Knowledge Platform'.",
+    "latency_ms": 492.0
+  },
   "POST /ask (hybrid: vector+graph)": {
-    "answer": "Project 'MedNova Knowledge Platform' uses Technology 'Neo4j'. Project 'MedNova Knowledge Platform' uses Technology 'LangChain'. Project 'Patient Assistant Platform' uses Technology 'LangChain'. Document 'risk_assessment.md' mentions Technology 'Neo4j'.",
+    "answer": "Document 'risk_assessment.md' mentions Technology 'Neo4j'. Document 'knowledge_platform_design.md' mentions Technology 'LangChain'. Document 'knowledge_platform_design.md' mentions Technology 'Neo4j'. Document 'technical_architecture_notes.md' mentions Technology 'LangChain'.",
     "sources": [
       "knowledge_platform_design.md",
       "meeting_summary_2026_06.md",
@@ -59,31 +117,23 @@
       "Neo4j"
     ],
     "cached": false,
-    "latency_ms": 2.0
+    "latency_ms": 2.6
   },
-  "POST /ask (graph relationship)": {
-    "answer": "Project 'MedNova Knowledge Platform' uses Technology 'Neo4j'. Project 'MedNova Knowledge Platform' uses Technology 'Astra DB'. Document 'knowledge_platform_design.md' mentions Technology 'Neo4j'. Document 'knowledge_platform_design.md' mentions Technology 'Astra DB'.",
+  "POST /ask (MCP tool route)": {
+    "answer": "2026-07-06T14:49:05.473669+00:00",
     "sources": [
-      "knowledge_platform_design.md",
-      "meeting_summary_2026_06.md",
-      "risk_assessment.md",
-      "technical_architecture_notes.md"
+      "mcp://mednova-knowledge/current_datetime"
     ],
-    "retrieval_strategy": "graph",
-    "related_entities": [
-      "Astra DB",
-      "MedNova Knowledge Platform",
-      "Neo4j"
-    ],
-    "route": "graph",
+    "retrieval_strategy": "mcp_tool",
+    "related_entities": [],
+    "route": "tool",
     "confidence": 0.9,
     "llm_backend": "extractive-fallback",
     "matched_entities": [
-      "Astra DB",
-      "Neo4j"
+      "current_datetime"
     ],
     "cached": false,
-    "latency_ms": 1.1
+    "latency_ms": 493.0
   },
   "POST /ask (refusal / honesty gate)": {
     "answer": "I don't have enough information in the provided MedNova documents to answer that confidently.",
@@ -99,7 +149,7 @@
     "llm_backend": "extractive-fallback",
     "matched_entities": [],
     "cached": false,
-    "latency_ms": 1.4
+    "latency_ms": 0.7
   },
   "POST /voice/ask": {
     "answer": "This document defines voice-based AI requirements across MedNova projects. Confirm voice-based AI requirements with St. Requirements - The platform requires voice-based AI with speech-to-text and text-to-speech. The Patient Assistant Platform requires voice-based AI.",
@@ -115,7 +165,7 @@
     "llm_backend": "extractive-fallback",
     "matched_entities": [],
     "cached": false,
-    "latency_ms": 1.6,
+    "latency_ms": 0.8,
     "transcript": "Which requirements mention voice-based AI?",
     "speech_text": "This document defines voice-based AI requirements across MedNova projects. Confirm voice-based AI requirements with St. Requirements - The platform requires voice-based AI with speech-to-text and text-to-speech. The Patient Assistant Platform requires voice-based AI."
   },
