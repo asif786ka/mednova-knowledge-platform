@@ -1,0 +1,72 @@
+{
+  "info": {
+    "name": "MedNova AI Knowledge Platform",
+    "description": "Endpoints for the MedNova Agentic AI Knowledge Platform. Base URL defaults to http://localhost:8000 via the {{base_url}} variable.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [{"key": "base_url", "value": "http://localhost:8000"}],
+  "item": [
+    {
+      "name": "Health",
+      "request": {"method": "GET", "url": "{{base_url}}/health"}
+    },
+    {
+      "name": "Ingest (sync)",
+      "request": {
+        "method": "POST",
+        "header": [{"key": "Content-Type", "value": "application/json"}],
+        "url": "{{base_url}}/ingest",
+        "body": {"mode": "raw", "raw": "{\n  \"folder\": \"sample_docs\",\n  \"reset\": true\n}"}
+      }
+    },
+    {
+      "name": "Ingest (async)",
+      "request": {
+        "method": "POST",
+        "header": [{"key": "Content-Type", "value": "application/json"}],
+        "url": "{{base_url}}/ingest",
+        "body": {"mode": "raw", "raw": "{\n  \"async\": true,\n  \"folder\": \"sample_docs\"\n}"}
+      }
+    },
+    {
+      "name": "Ask (hybrid vector+graph)",
+      "request": {
+        "method": "POST",
+        "header": [{"key": "Content-Type", "value": "application/json"}],
+        "url": "{{base_url}}/ask",
+        "body": {"mode": "raw", "raw": "{\n  \"question\": \"Which projects use LangChain and Neo4j?\"\n}"}
+      }
+    },
+    {
+      "name": "Ask (graph relationship)",
+      "request": {
+        "method": "POST",
+        "header": [{"key": "Content-Type", "value": "application/json"}],
+        "url": "{{base_url}}/ask",
+        "body": {"mode": "raw", "raw": "{\n  \"question\": \"What is the relationship between the knowledge platform, Neo4j, and Astra DB?\"\n}"}
+      }
+    },
+    {
+      "name": "Ask (out-of-domain refusal)",
+      "request": {
+        "method": "POST",
+        "header": [{"key": "Content-Type", "value": "application/json"}],
+        "url": "{{base_url}}/ask",
+        "body": {"mode": "raw", "raw": "{\n  \"question\": \"What is the capital of France?\"\n}"}
+      }
+    },
+    {
+      "name": "Voice Ask",
+      "request": {
+        "method": "POST",
+        "header": [{"key": "Content-Type", "value": "application/json"}],
+        "url": "{{base_url}}/voice/ask",
+        "body": {"mode": "raw", "raw": "{\n  \"transcript\": \"Which requirements mention voice-based AI?\"\n}"}
+      }
+    },
+    {
+      "name": "Graph Stats",
+      "request": {"method": "GET", "url": "{{base_url}}/graph/stats"}
+    }
+  ]
+}

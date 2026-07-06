@@ -1,0 +1,19 @@
+
+ID  Question                                               route    R S K  pass
+----------------------------------------------------------------------------------
+1   Which MedNova projects use AI automation?              vector   ✓ ✓ ✓  PASS
+2   Which documents mention cloud deployment?              vector   ✓ ✓ ✓  PASS
+3   What risks are mentioned across the project document   vector   ✓ ✓ ✓  PASS
+4   Which technologies are connected to the patient assi   hybrid   ✓ ✓ ✓  PASS
+5   Which projects use LangChain?                          hybrid   ✓ ✓ ✓  PASS
+6   Which services are related to patient engagement?      graph    ✓ ✓ ✓  PASS
+7   What is the relationship between the knowledge platf   graph    ✓ ✓ ✓  PASS
+8   Which requirements mention voice-based AI?             vector   ✓ ✓ ✓  PASS
+9   Which cloud providers are mentioned in the documents   vector   ✓ ✓ ✓  PASS
+10  Summarise the architecture of the MedNova AI knowled   summary  ✓ ✓ ✓  PASS
+11  Which projects use both RAG and GraphRAG?              hybrid   ✓ ✓ ✓  PASS
+12  What are the main implementation challenges mentione   vector   ✓ ✓ ✓  PASS
+13  What is the capital of France?                         vector   ✓ ✓ ✓  PASS
+----------------------------------------------------------------------------------
+Passed 13/13  (100%)   [R=route ok, S=source recall, K=keyword recall]
+OK

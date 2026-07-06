@@ -1,0 +1,38 @@
+# MedNova AI Knowledge Platform — local stack.
+# `docker compose up` starts the API + Redis. The API runs offline by default;
+# uncomment the env vars to plug in a real LLM / managed services.
+services:
+  api:
+    build: .
+    ports:
+      - "8000:8000"
+    environment:
+      REDIS_URL: redis://redis:6379/0
+      LOG_LEVEL: INFO
+      # --- optional: enable a real LLM ---
+      # OPENAI_API_KEY: ${OPENAI_API_KEY}
+      # LLM_MODEL: gpt-4o-mini
+      # --- optional: Langfuse tracing ---
+      # LANGFUSE_PUBLIC_KEY: ${LANGFUSE_PUBLIC_KEY}
+      # LANGFUSE_SECRET_KEY: ${LANGFUSE_SECRET_KEY}
+    volumes:
+      - ./sample_docs:/app/sample_docs
+      - ./data:/app/data
+    depends_on:
+      - redis
+    restart: unless-stopped
+
+  redis:
+    image: redis:7-alpine
+    ports:
+      - "6379:6379"
+    restart: unless-stopped
+
+# Optional managed-graph example (uncomment to run Neo4j locally):
+#  neo4j:
+#    image: neo4j:5
+#    environment:
+#      NEO4J_AUTH: neo4j/password
+#    ports:
+#      - "7474:7474"
+#      - "7687:7687"

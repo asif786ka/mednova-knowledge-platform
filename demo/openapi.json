@@ -1,0 +1,598 @@
+{
+  "openapi": "3.1.0",
+  "info": {
+    "title": "MedNova Agentic AI Knowledge Platform",
+    "description": "Internal knowledge assistant: RAG + GraphRAG + agentic routing over MedNova documents. Source-backed answers with an honesty gate.",
+    "version": "0.1.0"
+  },
+  "paths": {
+    "/health": {
+      "get": {
+        "tags": [
+          "system"
+        ],
+        "summary": "Health",
+        "operationId": "health_health_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HealthResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/ingest": {
+      "post": {
+        "tags": [
+          "ingestion"
+        ],
+        "summary": "Ingest",
+        "operationId": "ingest_ingest_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/IngestRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/IngestResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/jobs/{job_id}": {
+      "get": {
+        "tags": [
+          "ingestion"
+        ],
+        "summary": "Job Status",
+        "operationId": "job_status_jobs__job_id__get",
+        "parameters": [
+          {
+            "name": "job_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Job Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/ask": {
+      "post": {
+        "tags": [
+          "qa"
+        ],
+        "summary": "Ask",
+        "operationId": "ask_ask_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AskRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AskResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/voice/ask": {
+      "post": {
+        "tags": [
+          "voice"
+        ],
+        "summary": "Voice Ask",
+        "description": "Voice route. Accepts a transcript (client-side or server-side STT). Returns the same\nrouted answer plus `speech_text` ready for a text-to-speech engine. Audio-file upload and\nWhisper STT / TTS synthesis are designed and documented; the transcript path keeps the\nprototype dependency-free (see SYSTEM_DESIGN 'Voice AI').",
+        "operationId": "voice_ask_voice_ask_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/VoiceAskRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/VoiceAskResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/graph/stats": {
+      "get": {
+        "tags": [
+          "graph"
+        ],
+        "summary": "Graph Stats",
+        "operationId": "graph_stats_graph_stats_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          }
+        }
+      }
+    },
+    "/": {
+      "get": {
+        "tags": [
+          "system"
+        ],
+        "summary": "Root",
+        "operationId": "root__get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "AskRequest": {
+        "properties": {
+          "question": {
+            "type": "string",
+            "maxLength": 500,
+            "minLength": 3,
+            "title": "Question",
+            "description": "Natural-language question about MedNova documents."
+          }
+        },
+        "type": "object",
+        "required": [
+          "question"
+        ],
+        "title": "AskRequest"
+      },
+      "AskResponse": {
+        "properties": {
+          "answer": {
+            "type": "string",
+            "title": "Answer"
+          },
+          "sources": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Sources"
+          },
+          "retrieval_strategy": {
+            "type": "string",
+            "title": "Retrieval Strategy"
+          },
+          "related_entities": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Related Entities",
+            "default": []
+          },
+          "route": {
+            "type": "string",
+            "title": "Route"
+          },
+          "confidence": {
+            "type": "number",
+            "title": "Confidence"
+          },
+          "llm_backend": {
+            "type": "string",
+            "title": "Llm Backend"
+          },
+          "matched_entities": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Matched Entities",
+            "default": []
+          },
+          "cached": {
+            "type": "boolean",
+            "title": "Cached",
+            "default": false
+          },
+          "latency_ms": {
+            "type": "number",
+            "title": "Latency Ms"
+          }
+        },
+        "type": "object",
+        "required": [
+          "answer",
+          "sources",
+          "retrieval_strategy",
+          "route",
+          "confidence",
+          "llm_backend",
+          "latency_ms"
+        ],
+        "title": "AskResponse"
+      },
+      "HTTPValidationError": {
+        "properties": {
+          "detail": {
+            "items": {
+              "$ref": "#/components/schemas/ValidationError"
+            },
+            "type": "array",
+            "title": "Detail"
+          }
+        },
+        "type": "object",
+        "title": "HTTPValidationError"
+      },
+      "HealthResponse": {
+        "properties": {
+          "status": {
+            "type": "string",
+            "title": "Status",
+            "default": "ok"
+          },
+          "vector_db": {
+            "type": "string",
+            "title": "Vector Db"
+          },
+          "graph_db": {
+            "type": "string",
+            "title": "Graph Db"
+          },
+          "llm_provider": {
+            "type": "string",
+            "title": "Llm Provider"
+          },
+          "cache": {
+            "type": "string",
+            "title": "Cache"
+          },
+          "embeddings": {
+            "type": "string",
+            "title": "Embeddings"
+          },
+          "documents_indexed": {
+            "type": "integer",
+            "title": "Documents Indexed"
+          },
+          "graph_nodes": {
+            "type": "integer",
+            "title": "Graph Nodes"
+          }
+        },
+        "type": "object",
+        "required": [
+          "vector_db",
+          "graph_db",
+          "llm_provider",
+          "cache",
+          "embeddings",
+          "documents_indexed",
+          "graph_nodes"
+        ],
+        "title": "HealthResponse"
+      },
+      "IngestRequest": {
+        "properties": {
+          "folder": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Folder",
+            "description": "Folder to ingest. Defaults to the sample_docs directory."
+          },
+          "reset": {
+            "type": "boolean",
+            "title": "Reset",
+            "description": "Clear existing index before ingesting.",
+            "default": true
+          },
+          "async": {
+            "type": "boolean",
+            "title": "Async",
+            "description": "Run ingestion in the background and return a job id immediately.",
+            "default": false
+          }
+        },
+        "type": "object",
+        "title": "IngestRequest"
+      },
+      "IngestResponse": {
+        "properties": {
+          "status": {
+            "type": "string",
+            "title": "Status"
+          },
+          "documents_processed": {
+            "type": "integer",
+            "title": "Documents Processed"
+          },
+          "chunks_created": {
+            "type": "integer",
+            "title": "Chunks Created"
+          },
+          "entities_extracted": {
+            "type": "integer",
+            "title": "Entities Extracted"
+          },
+          "relationships_created": {
+            "type": "integer",
+            "title": "Relationships Created"
+          },
+          "skipped": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Skipped",
+            "default": []
+          },
+          "job_id": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Job Id"
+          }
+        },
+        "type": "object",
+        "required": [
+          "status",
+          "documents_processed",
+          "chunks_created",
+          "entities_extracted",
+          "relationships_created"
+        ],
+        "title": "IngestResponse"
+      },
+      "ValidationError": {
+        "properties": {
+          "loc": {
+            "items": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "integer"
+                }
+              ]
+            },
+            "type": "array",
+            "title": "Location"
+          },
+          "msg": {
+            "type": "string",
+            "title": "Message"
+          },
+          "type": {
+            "type": "string",
+            "title": "Error Type"
+          },
+          "input": {
+            "title": "Input"
+          },
+          "ctx": {
+            "type": "object",
+            "title": "Context"
+          }
+        },
+        "type": "object",
+        "required": [
+          "loc",
+          "msg",
+          "type"
+        ],
+        "title": "ValidationError"
+      },
+      "VoiceAskRequest": {
+        "properties": {
+          "transcript": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Transcript",
+            "description": "Transcribed question text (from client-side STT)."
+          }
+        },
+        "type": "object",
+        "title": "VoiceAskRequest"
+      },
+      "VoiceAskResponse": {
+        "properties": {
+          "answer": {
+            "type": "string",
+            "title": "Answer"
+          },
+          "sources": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Sources"
+          },
+          "retrieval_strategy": {
+            "type": "string",
+            "title": "Retrieval Strategy"
+          },
+          "related_entities": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Related Entities",
+            "default": []
+          },
+          "route": {
+            "type": "string",
+            "title": "Route"
+          },
+          "confidence": {
+            "type": "number",
+            "title": "Confidence"
+          },
+          "llm_backend": {
+            "type": "string",
+            "title": "Llm Backend"
+          },
+          "matched_entities": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Matched Entities",
+            "default": []
+          },
+          "cached": {
+            "type": "boolean",
+            "title": "Cached",
+            "default": false
+          },
+          "latency_ms": {
+            "type": "number",
+            "title": "Latency Ms"
+          },
+          "transcript": {
+            "type": "string",
+            "title": "Transcript"
+          },
+          "speech_text": {
+            "type": "string",
+            "title": "Speech Text"
+          }
+        },
+        "type": "object",
+        "required": [
+          "answer",
+          "sources",
+          "retrieval_strategy",
+          "route",
+          "confidence",
+          "llm_backend",
+          "latency_ms",
+          "transcript",
+          "speech_text"
+        ],
+        "title": "VoiceAskResponse"
+      }
+    }
+  }
+}

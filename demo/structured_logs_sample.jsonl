@@ -1,0 +1,12 @@
+{"ts": "2026-07-06T12:58:34", "level": "INFO", "logger": "mednova.embeddings", "msg": "sentence-transformers unavailable (No module named 'sentence_transformers'); using hash embedder"}
+{"ts": "2026-07-06T12:58:34", "level": "INFO", "logger": "mednova.vector_store", "msg": "Loaded vector store: 18 records"}
+{"ts": "2026-07-06T12:58:34", "level": "INFO", "logger": "mednova.graph_store", "msg": "Loaded graph: 56 nodes / 131 edges"}
+{"ts": "2026-07-06T12:58:34", "level": "INFO", "logger": "mednova.state", "msg": "Serving stores reloaded (18 vectors, 56 graph nodes)"}
+{"ts": "2026-07-06T12:58:34", "level": "INFO", "logger": "mednova.api", "msg": "request", "request_id": "6feb2e734930", "method": "GET", "path": "/health", "status": 200, "latency_ms": 6.0}
+{"ts": "2026-07-06T12:58:34", "level": "INFO", "logger": "mednova.router", "msg": "route selected", "request_id": "d64f260ffcc6", "route": "hybrid", "question": "Which projects use both RAG and GraphRAG?"}
+{"ts": "2026-07-06T12:58:34", "level": "INFO", "logger": "mednova.trace", "msg": "trace:retrieve", "request_id": "d64f260ffcc6", "latency_ms": 0.5, "route": "hybrid"}
+{"ts": "2026-07-06T12:58:34", "level": "INFO", "logger": "mednova.trace", "msg": "trace:synthesize", "request_id": "d64f260ffcc6", "latency_ms": 0.4, "backend": "extractive-fallback"}
+{"ts": "2026-07-06T12:58:34", "level": "INFO", "logger": "mednova.api", "msg": "answered", "request_id": "d64f260ffcc6", "route": "hybrid", "strategy": "vector_and_graph", "confidence": 0.9, "sources": ["knowledge_platform_design.md", "meeting_summary_2026_06.md", "technical_architecture_notes.md"], "latency_ms": 1.8}
+{"ts": "2026-07-06T12:58:34", "level": "INFO", "logger": "mednova.api", "msg": "request", "request_id": "d64f260ffcc6", "method": "POST", "path": "/ask", "status": 200, "latency_ms": 3.3}
+{"ts": "2026-07-06T12:58:34", "level": "INFO", "logger": "mednova.api", "msg": "cache hit", "request_id": "6b7b60fb7069", "question": "Which projects use both RAG and GraphRAG?"}
+{"ts": "2026-07-06T12:58:34", "level": "INFO", "logger": "mednova.api", "msg": "request", "request_id": "6b7b60fb7069", "method": "POST", "path": "/ask", "status": 200, "latency_ms": 1.0}

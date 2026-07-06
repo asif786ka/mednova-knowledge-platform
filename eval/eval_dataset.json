@@ -1,0 +1,96 @@
+{
+  "description": "Evaluation set for the MedNova Knowledge Platform. Each case lists the question, the route we expect the agent to pick, source documents that SHOULD appear, and keywords the answer should contain. Metrics: route accuracy, source recall, keyword recall, and honesty (refusal on out-of-domain).",
+  "cases": [
+    {
+      "id": 1,
+      "question": "Which MedNova projects use AI automation?",
+      "expected_route": ["vector", "hybrid", "graph"],
+      "expected_sources_any": ["meeting_summary_2026_06.md", "remote_care_platform_brief.md", "operational_insights_service.md"],
+      "expected_keywords_any": ["Knowledge Platform", "Patient Assistant", "Remote Care", "Operational Insights", "automation"]
+    },
+    {
+      "id": 2,
+      "question": "Which documents mention cloud deployment?",
+      "expected_route": ["vector", "hybrid"],
+      "expected_sources_any": ["cloud_deployment_plan.md"],
+      "expected_keywords_any": ["cloud", "AWS", "Azure", "GCP", "deploy"]
+    },
+    {
+      "id": 3,
+      "question": "What risks are mentioned across the project documents?",
+      "expected_route": ["vector", "graph", "hybrid"],
+      "expected_sources_any": ["risk_assessment.md"],
+      "expected_keywords_any": ["risk", "HIPAA", "hallucination", "latency", "lock-in"]
+    },
+    {
+      "id": 4,
+      "question": "Which technologies are connected to the patient assistant platform?",
+      "expected_route": ["graph", "hybrid"],
+      "expected_sources_any": ["patient_assistant_project_brief.md", "voice_ai_requirements.md"],
+      "expected_keywords_any": ["Speech-to-Text", "Text-to-Speech", "LangChain", "Twilio", "Whisper"]
+    },
+    {
+      "id": 5,
+      "question": "Which projects use LangChain?",
+      "expected_route": ["graph", "hybrid", "vector"],
+      "expected_sources_any": ["knowledge_platform_design.md", "technical_architecture_notes.md", "patient_assistant_project_brief.md"],
+      "expected_keywords_any": ["Knowledge Platform", "Patient Assistant", "LangChain"]
+    },
+    {
+      "id": 6,
+      "question": "Which services are related to patient engagement?",
+      "expected_route": ["vector", "graph", "hybrid"],
+      "expected_sources_any": ["voice_ai_requirements.md", "remote_care_platform_brief.md"],
+      "expected_keywords_any": ["patient engagement", "voice", "Remote Care", "check-in"]
+    },
+    {
+      "id": 7,
+      "question": "What is the relationship between the knowledge platform, Neo4j, and Astra DB?",
+      "expected_route": ["graph", "hybrid"],
+      "expected_sources_any": ["technical_architecture_notes.md", "knowledge_platform_design.md"],
+      "expected_keywords_any": ["Neo4j", "Astra DB", "Knowledge Platform", "graph", "vector"]
+    },
+    {
+      "id": 8,
+      "question": "Which requirements mention voice-based AI?",
+      "expected_route": ["vector", "graph", "hybrid"],
+      "expected_sources_any": ["voice_ai_requirements.md", "patient_assistant_project_brief.md"],
+      "expected_keywords_any": ["voice", "Speech-to-Text", "Text-to-Speech", "Welsh"]
+    },
+    {
+      "id": 9,
+      "question": "Which cloud providers are mentioned in the documents?",
+      "expected_route": ["vector", "hybrid"],
+      "expected_sources_any": ["cloud_deployment_plan.md"],
+      "expected_keywords_any": ["AWS", "Azure", "GCP", "Google Cloud"]
+    },
+    {
+      "id": 10,
+      "question": "Summarise the architecture of the MedNova AI knowledge platform.",
+      "expected_route": ["summary"],
+      "expected_sources_any": ["technical_architecture_notes.md", "knowledge_platform_design.md"],
+      "expected_keywords_any": ["LangChain", "LangGraph", "Neo4j", "Astra DB", "RAG", "GraphRAG", "FastAPI"]
+    },
+    {
+      "id": 11,
+      "question": "Which projects use both RAG and GraphRAG?",
+      "expected_route": ["hybrid", "graph", "vector"],
+      "expected_sources_any": ["meeting_summary_2026_06.md", "technical_architecture_notes.md", "knowledge_platform_design.md"],
+      "expected_keywords_any": ["Knowledge Platform", "RAG", "GraphRAG"]
+    },
+    {
+      "id": 12,
+      "question": "What are the main implementation challenges mentioned in the documents?",
+      "expected_route": ["vector", "hybrid"],
+      "expected_sources_any": ["technical_architecture_notes.md", "meeting_summary_2026_06.md"],
+      "expected_keywords_any": ["entity", "extraction", "hallucination", "latency", "cost"]
+    },
+    {
+      "id": 13,
+      "question": "What is the capital of France?",
+      "expected_route": ["vector", "graph", "hybrid", "summary"],
+      "expect_refusal": true,
+      "expected_keywords_any": ["enough information"]
+    }
+  ]
+}

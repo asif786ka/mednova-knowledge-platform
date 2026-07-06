@@ -1,0 +1,67 @@
+Ingesting sample documents...
+  9 docs, 18 chunks, 47 entities, 154 relationships
+
+[ 1] Q: Which MedNova projects use AI automation?
+     route=vector  strategy=vector  confidence=0.59
+     A: Which projects use AI automation It was noted that all four projects use AI automation: the Knowledge Platform (agentic retrieval), the Patient Assistant Platform (query triage), the Remote Care Platform (anomaly detection), and the Operational Insights Service (demand forecasting). It uses AI automation for demand for
+     sources: meeting_summary_2026_06.md, operational_insights_service.md, technical_architecture_notes.md, risk_assessment.md
+
+[ 2] Q: Which documents mention cloud deployment?
+     route=vector  strategy=vector  confidence=0.41
+     A: Cloud deployment boundaries isolate patient data per client. Documents mentioning cloud deployment include this plan, the Knowledge Platform design, and both patient project briefs. Cloud deployment uses autoscaling node pools for telemetry spikes. Cloud deployment The Remote Care Platform is deployed on Google Cloud P
+     sources: cloud_deployment_plan.md, remote_care_platform_brief.md
+
+[ 3] Q: What risks are mentioned across the project documents?
+     route=vector  strategy=vector  confidence=0.32
+     A: Graph search runs over a Neo4j knowledge graph that models the relationships between clients, projects, technologies, cloud providers, risks, and requirements.
+     sources: risk_assessment.md, knowledge_platform_design.md, technical_architecture_notes.md
+
+[ 4] Q: Which technologies are connected to the patient assistant platform?
+     route=hybrid  strategy=vector_and_graph  confidence=0.90
+     A: Technologies connected to the patient assistant platform The Patient Assistant Platform uses Speech-to-Text (Whisper) and Text-to-Speech for its voice interface, LangChain for dialogue orchestration, and Twilio for telephony. Requirement 'The Patient Assistant Platform requires voice-based AI. A voice assistant require
+     sources: patient_assistant_project_brief.md, voice_ai_requirements.md, meeting_summary_2026_06.md, risk_assessment.md
+     related: AI automation, Data privacy / HIPAA risk, LangChain, Microsoft Azure, Patient Assistant Platform, Speech-to-Text, St. Aldwyn Hospital, Text-to-Speech
+
+[ 5] Q: Which projects use LangChain?
+     route=hybrid  strategy=vector_and_graph  confidence=0.90
+     A: Project 'Patient Assistant Platform' uses Technology 'LangChain'. Document 'technical_architecture_notes.md' mentions Technology 'LangChain'. Document 'patient_assistant_project_brief.md' mentions Technology 'LangChain'. Document 'knowledge_platform_design.md' mentions Technology 'LangChain'.
+     sources: knowledge_platform_design.md, meeting_summary_2026_06.md, patient_assistant_project_brief.md, technical_architecture_notes.md
+     related: LangChain, MedNova Knowledge Platform, Patient Assistant Platform
+
+[ 6] Q: Which services are related to patient engagement?
+     route=graph  strategy=vector  confidence=0.36
+     A: Related services Voice-based AI is related to patient engagement and to the Patient Assistant Platform's triage service. Related to patient engagement through automated check-in reminders. The Patient Assistant Platform requires voice-based AI. A voice assistant requires Speech-to-Text to transcribe patient audio and T
+     sources: voice_ai_requirements.md, remote_care_platform_brief.md, patient_assistant_project_brief.md
+
+[ 7] Q: What is the relationship between the knowledge platform, Neo4j, and Astra DB?
+     route=graph  strategy=graph  confidence=0.90
+     A: Document 'knowledge_platform_design.md' mentions Technology 'Neo4j'. Document 'knowledge_platform_design.md' mentions Technology 'Astra DB'. Project 'MedNova Knowledge Platform' uses Technology 'Astra DB'. Project 'MedNova Knowledge Platform' uses Technology 'Neo4j'.
+     sources: knowledge_platform_design.md, meeting_summary_2026_06.md, risk_assessment.md, technical_architecture_notes.md
+     related: Astra DB, MedNova Knowledge Platform, Neo4j
+
+[ 8] Q: Which requirements mention voice-based AI?
+     route=vector  strategy=vector  confidence=0.42
+     A: This document defines voice-based AI requirements across MedNova projects. Confirm voice-based AI requirements with St. Requirements - The platform requires voice-based AI with speech-to-text and text-to-speech. The Patient Assistant Platform requires voice-based AI.
+     sources: voice_ai_requirements.md, meeting_summary_2026_06.md, patient_assistant_project_brief.md
+
+[ 9] Q: Which cloud providers are mentioned in the documents?
+     route=vector  strategy=vector  confidence=0.41
+     A: Graph search runs over a Neo4j knowledge graph that models the relationships between clients, projects, technologies, cloud providers, risks, and requirements. e graph that models the relationships between clients, projects, technologies, cloud providers, risks, and requirements. The Remote Care Platform is deployed on
+     sources: cloud_deployment_plan.md, technical_architecture_notes.md, knowledge_platform_design.md, remote_care_platform_brief.md
+
+[10] Q: Summarise the architecture of the MedNova AI knowledge platform.
+     route=summary  strategy=vector_summary  confidence=0.52
+     A: Project: MedNova Knowledge Platform Status: Active prototype Overview The MedNova Knowledge Platform is an internal agentic AI knowledge assistant. The MedNova Knowledge Platform uses both RAG and GraphRAG. Technology Stack The Knowledge Platform uses LangChain for orchestration and LangGraph to implement the agentic r
+     sources: knowledge_platform_design.md, technical_architecture_notes.md, meeting_summary_2026_06.md, cloud_deployment_plan.md, risk_assessment.md
+
+[11] Q: Which projects use both RAG and GraphRAG?
+     route=hybrid  strategy=vector_and_graph  confidence=0.90
+     A: Decisions - The MedNova Knowledge Platform will use both RAG and GraphRAG. Projects that use both RAG and GraphRAG: currently only the Knowledge Platform. The MedNova Knowledge Platform uses both RAG and GraphRAG. The platform combines RAG (Retrieval-Augmented Generation) with GraphRAG so that it can answer both docume
+     sources: knowledge_platform_design.md, meeting_summary_2026_06.md, technical_architecture_notes.md
+     related: GraphRAG, MedNova Knowledge Platform, RAG
+
+[12] Q: What are the main implementation challenges mentioned in the documents?
+     route=vector  strategy=vector  confidence=0.45
+     A: Implementation challenges The main implementation challenges are: keeping entity extraction accurate without a fine-tuned NER model, avoiding hallucination when documents are sparse, and controlling LLM latency and cost under load. Action items - Address the main implementation challenges: entity-extraction accuracy, h
+     sources: technical_architecture_notes.md, meeting_summary_2026_06.md, cloud_deployment_plan.md, knowledge_platform_design.md
+
